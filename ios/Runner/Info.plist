@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>O App Blink acessa a câmera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>O App Blink acessa a Galeria</string>
 </dict>
 </plist>
