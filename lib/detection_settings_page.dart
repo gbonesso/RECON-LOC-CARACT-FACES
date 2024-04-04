@@ -22,10 +22,15 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
   String? _appDirectoryPath;
   List<Face> _faces = [];
   double _minFaceSize = 0.1;
+  bool _enableClassification = true;
+  bool _enableContours = true;
+  bool _enableLandmarks = true;
+  FaceDetectorMode _performanceMode = FaceDetectorMode.accurate;
   Size? _imageSize;
   Size? _adjustedImageSize;
   double _imageSizeRatio = 1.0;
   img.Image? _rawImage;
+  int? _detectionDuration;
 
   @override
   void initState() {
@@ -49,12 +54,12 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
     final _faceDetector = FaceDetector(
       options: FaceDetectorOptions(
         enableClassification:
-            true, // Need to run additional classification for eyes open
-        enableContours: true, // Defaults to false
-        enableLandmarks: true,
+            _enableClassification, // Need to run additional classification for eyes open
+        enableContours: _enableContours, // Defaults to false
+        enableLandmarks: _enableLandmarks,
         minFaceSize:
             _minFaceSize, // Defaults to 0.1 (increase size turn it faster?)
-        performanceMode: FaceDetectorMode.accurate, // Defaults to fast
+        performanceMode: _performanceMode, // Defaults to fast
       ),
     );
 
@@ -74,7 +79,10 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
 
     //final inputImage = InputImage.fromFilePath(widget.imagePath);
     final inputImage = InputImage.fromFilePath(outputFilePath);
+    final begin = DateTime.now();
     _faces = await _faceDetector.processImage(inputImage);
+    _detectionDuration = DateTime.now().difference(begin).inMilliseconds;
+    print('Face detection duration: $_detectionDuration ms');
 
     print('faces.length: ${_faces.length}');
     setState(() {});
@@ -83,6 +91,7 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
   List<Widget> renderFaces() {
     final List<Widget> widgets = [];
     widgets.add(Text('Faces detectadas: ${_faces.length}'));
+    widgets.add(Text('Tempo de detecção: ${_detectionDuration}ms'));
     widgets.add(Divider());
     final outputFilePath = '$_appDirectoryPath/output.png';
     img.Image? image = img.decodeImage(File(outputFilePath).readAsBytesSync());
@@ -159,7 +168,7 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
             // Slider to configure the minimum face size
             Row(
               children: [
-                Text('Tamanho Mínimo da Face: '),
+                const Text('Tamanho Mínimo da Face: '),
                 Slider(
                   value: _minFaceSize,
                   max: 1.0,
@@ -170,6 +179,61 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
                     setState(() {
                       _faces.clear();
                       _minFaceSize = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            // Checkboxes to enable/disable classification, contours, and landmarks
+            Row(
+              children: [
+                const Text('Enable Classification: '),
+                Checkbox(
+                  value: _enableClassification,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _enableClassification = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text('Enable Contours: '),
+                Checkbox(
+                  value: _enableContours,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _enableContours = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text('Enable Landmarks: '),
+                Checkbox(
+                  value: _enableLandmarks,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _enableLandmarks = value!;
+                    });
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const Text('Fast mode: '),
+                Checkbox(
+                  value: _performanceMode == FaceDetectorMode.fast,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _performanceMode = value!
+                          ? FaceDetectorMode.fast
+                          : FaceDetectorMode.accurate;
                     });
                   },
                 ),
