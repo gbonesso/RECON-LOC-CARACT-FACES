@@ -46,8 +46,14 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>O App Blink acessa a câmera</string>
+	<string>O App acessa a câmera</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>O App Blink acessa a Galeria</string>
+	<string>O App acessa a Galeria</string>
+
+	<!-- Add these lines to save files to Downloads directory-->
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 </dict>
 </plist>
