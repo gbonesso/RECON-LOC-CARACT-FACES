@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +16,18 @@ Future<void> main() async {
   final appDirectory = await getApplicationDocumentsDirectory();
 
   // Copiar arquivo de vídeo para o diretório de trabalho do aplicativo
-  ByteData data =
-      await rootBundle.load('assets/eyeblink8/9/27122013_152435_cam.avi');
+  //final filePath = 'assets/eyeblink8/9/27122013_152435_cam.avi';
+  //const filePath = 'assets/eyeblink8/1/26122013_223310_cam.avi';
+  //const filePath = 'assets/eyeblink8/2/26122013_224532_cam.avi';
+  //const filePath = 'assets/eyeblink8/3/26122013_230103_cam.avi';
+  const filePath = 'assets/eyeblink8/4/26122013_230654_cam.avi';
+  final fileName = filePath.split('/').last;
+  final fileNameWithoutExtension = fileName.split('.').first;
+
+  ByteData data = await rootBundle.load(filePath);
   List<int> bytes =
       data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  String path = '${appDirectory.path}/eyeblink8_9.avi';
+  String path = '${appDirectory.path}/$fileName';
   await File(path).writeAsBytes(bytes);
   print('File copied to: $path');
 
@@ -36,9 +44,9 @@ Future<void> main() async {
   print('Frames directory created: ${frameDir.path}');
 
   // Executar comando FFmpeg para extrair frames do vídeo
-  var command = '-i ${appDirectory.path}/eyeblink8_9.avi '
+  var command = '-i ${appDirectory.path}/$fileName '
       '-s 640x480 '
-      '${appDirectory.path}/frames/out-%06d.png';
+      '${appDirectory.path}/frames/$fileNameWithoutExtension-%06d.png';
   var session = await FFmpegKit.execute(command);
   var returnCode = await session.getReturnCode();
   print('returnCode: $returnCode');
@@ -89,11 +97,20 @@ Future<void> main() async {
         linha.add('0.0');
       }
       dados.add(linha);
+      frame++;
     }
   }
 
   String csv = const ListToCsvConverter().convert(dados);
-  String dir = '${(await getExternalStorageDirectory())!.path}/documents';
-  File f = File('$dir/filename.csv');
+  File f = File('${appDirectory.path}/$fileNameWithoutExtension.csv');
   f.writeAsString(csv);
+
+  final result = await Share.shareXFiles(
+    [XFile('${appDirectory.path}/$fileNameWithoutExtension.csv')],
+    text: 'Teste CSV',
+  );
+
+  if (result.status == ShareResultStatus.success) {
+    print('Comparilhado com sucesso');
+  }
 }
