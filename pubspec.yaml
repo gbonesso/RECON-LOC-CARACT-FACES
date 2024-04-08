@@ -15,6 +15,7 @@ dependencies:
   image: ^4.1.7
   image_picker: ^1.0.7
   path_provider: ^2.1.2
+  share_plus: ^8.0.2
 
 dev_dependencies:
   flutter_test:
@@ -24,4 +25,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/eyeblink8/1/
+    - assets/eyeblink8/2/
+    - assets/eyeblink8/3/
+    - assets/eyeblink8/4/
+    - assets/eyeblink8/8/
     - assets/eyeblink8/9/
+    - assets/eyeblink8/10/
+    - assets/eyeblink8/11/
