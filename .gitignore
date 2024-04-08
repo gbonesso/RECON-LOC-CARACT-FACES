@@ -41,5 +41,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Files too big (>50MB)
 assets/eyeblink8/1/26122013_223310_cam.avi
 assets/eyeblink8/2/26122013_224532_cam.avi
