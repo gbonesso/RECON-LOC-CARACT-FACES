@@ -20,7 +20,8 @@ Future<void> main() async {
   //const filePath = 'assets/eyeblink8/1/26122013_223310_cam.avi';
   //const filePath = 'assets/eyeblink8/2/26122013_224532_cam.avi';
   //const filePath = 'assets/eyeblink8/3/26122013_230103_cam.avi';
-  const filePath = 'assets/eyeblink8/4/26122013_230654_cam.avi';
+  //const filePath = 'assets/eyeblink8/4/26122013_230654_cam.avi';
+  const filePath = 'assets/eyeblink8/8/27122013_151644_cam.avi';
   final fileName = filePath.split('/').last;
   final fileNameWithoutExtension = fileName.split('.').first;
 
