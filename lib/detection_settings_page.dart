@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
+import 'package:recon_loc_caract_faces/face_detector_painter.dart';
 
 class DetectionSettingsPage extends StatefulWidget {
   final String imagePath;
@@ -90,6 +91,9 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
 
   List<Widget> renderFaces() {
     final List<Widget> widgets = [];
+    //final List<FaceDetectorPainter> painters = [];
+    //final List<CustomPaint> customPaints = [];
+
     widgets.add(Text('Faces detectadas: ${_faces.length}'));
     widgets.add(Text('Tempo de detecção: ${_detectionDuration}ms'));
     widgets.add(Divider());
@@ -105,13 +109,43 @@ class _DetectionSettingsPageState extends State<DetectionSettingsPage> {
         height: face.boundingBox.height.toInt(),
       );
       List<int>? faceImageEncoded = img.encodePng(faceImage);
-      final faceWidget =
-          Image.memory(Uint8List.fromList(faceImageEncoded.toList()));
+      final faceWidget = Image.memory(
+        Uint8List.fromList(faceImageEncoded.toList()),
+        width: double.infinity,
+        fit: BoxFit.fitWidth,
+      );
+      print('Face: ${face.boundingBox.size}');
+      print(
+          'Face first countoir length: ${face.contours[FaceContourType.face]?.points.length}');
+      print('_adjustedImageSize: $_adjustedImageSize');
+      print(MediaQuery.of(context).size.width);
+      final imageHeight = MediaQuery.of(context).size.width *
+          face.boundingBox.height /
+          face.boundingBox.width;
+
       widgets.add(
         Column(
           children: <Widget>[
             Text('Face: ${face.boundingBox}'),
-            faceWidget,
+            Stack(children: [
+              faceWidget,
+              //if (customPaint != null)
+              Positioned(
+                left: 0,
+                top: 0,
+                // TODO: Improve this...
+                width: MediaQuery.of(context).size.width,
+                height: imageHeight,
+                child: CustomPaint(
+                  painter: FaceDetectorPainter(
+                    face,
+                    face.boundingBox.size,
+                    InputImageRotation.rotation0deg,
+                  ),
+                ),
+              ),
+            ]),
+            //faceWidget,
             Text('HeadEulerAngleY: ${face.headEulerAngleY}'),
             Text('HeadEulerAngleZ: ${face.headEulerAngleZ}'),
             Text('LeftEyeOpenProbability: ${face.leftEyeOpenProbability}'),
